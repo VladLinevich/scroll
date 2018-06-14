@@ -3,7 +3,8 @@ class Drop {
       this.container = $('.main');
       this.content = $('.block');
       this.sensitivity = 5;
-      this.class = 'drag';
+      this.activeClass = 'drag';
+      this.moveClass = 'move';
       this.keyCodePress = 17;
 
       this.point = {
@@ -16,6 +17,7 @@ class Drop {
       };
 
       this.flag = false;
+      this.flagKey = false;
       
       this.init();
     }
@@ -32,8 +34,8 @@ class Drop {
     
     }
 
-    toogleClass(){
-        this.content.toggleClass(this.class);
+    toogleClass(classToToggle){
+        this.content.toggleClass(classToToggle);
     }
 
     
@@ -46,19 +48,20 @@ class Drop {
         this.point.start.scrollTop = this.container.scrollTop();
         this.point.start.scrollLeft = this.container.scrollLeft();
 
-        console.log(this.point.start.x, 'DOWN')
+        this.flagKey ? this.toogleClass(this.moveClass) : false
+        
     }
 
     mouseUp(e){
-
         this.flag = false;
         this.point.endX = e.originalEvent.screenX;
-        console.log(this.point.endX, 'UP')
 
+        this.content.removeClass(this.moveClass)
+      
     }
 
     mouseMove(e){
-        this.flag ? this.deltaMove(e) : false
+        this.flag && this.flagKey ? this.deltaMove(e) : false
     }
 
     addEvents(){
@@ -75,13 +78,15 @@ class Drop {
 
         $(document).on('keydown', (event)=>{
             if(event.keyCode === this.keyCodePress) {
-                this.toogleClass();
+                this.toogleClass(this.activeClass);
+                this.flagKey = true;
             }
         });
 
         $(document).on('keyup', (event)=>{
             if(event.keyCode === this.keyCodePress) {
-                this.toogleClass();
+                this.toogleClass(this.activeClass);
+                this.flagKey = false;
             }
         });
 
